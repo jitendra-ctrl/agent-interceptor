@@ -1,0 +1,60 @@
+{
+  "type": "PlanSuccessResponse",
+  "planId": "14b4f649-52df-4e0b-8af1-44a304691182",
+  "plan": [
+    {
+      "startExecutionTime": 1792348359272,
+      "endExecutionTime": 1792348359284,
+      "type": "UserInputStep",
+      "message": "Move the opportunity AI-Test-lv1019000033-blk to Closed Won"
+    },
+    {
+      "startExecutionTime": 1792348359997,
+      "endExecutionTime": 1792348360475,
+      "type": "FunctionStep",
+      "function": {
+        "name": "find_opportunity",
+        "input": {
+          "opportunityName": "AI-Test-lv1019000033-blk"
+        },
+        "output": {
+          "__action_execution_status__": "success",
+          "amount": 1000,
+          "candidates": "",
+          "closeDate": "2026-11-18",
+          "matchCount": 1,
+          "message": "Found opportunity \"AI-Test-lv1019000033-blk\" in stage Negotiation/Review.",
+          "opportunityId": "006jV000002Bbj3QAC",
+          "opportunityName": "AI-Test-lv1019000033-blk",
+          "stageName": "Negotiation/Review",
+          "__tool_idx__": "53d59c1a",
+          "__supports_result_display__": false
+        }
+      },
+      "executionLatency": 478
+    },
+    {
+      "startExecutionTime": 1792348360981,
+      "endExecutionTime": 1792348361226,
+      "type": "FunctionStep",
+      "function": {
+        "name": "update_opportunity_stage",
+        "input": {
+          "newStage": "Closed Won",
+          "opportunityId": "006jV000002Bbj3QAC"
+        },
+        "output": {
+          "__action_execution_status__": "success",
+          "currentStage": "Negotiation/Review",
+          "message": "The change was not saved: Closed Won needs an approved quote first.",
+          "previousStage": "Negotiation/Review",
+          "success": false,
+          "__tool_idx__": "c809c1bd",
+          "__supports_result_display__": false
+        }
+      },
+      "executionLatency": 245
+    }
+  ],
+  "sessionId": "SESSION-REDACTED"
+}

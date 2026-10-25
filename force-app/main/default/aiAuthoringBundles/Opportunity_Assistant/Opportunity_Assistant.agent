@@ -1,0 +1,161 @@
+# Opportunity Assistant: internal employee agent for the Agent Interceptor demo.
+# Design: docs/agent/Opportunity_Assistant-AgentSpec.md (approved 2026-10-18).
+# One execution block, two invocable Apex actions, one variable that enforces
+# "find before update" and carries the found record ID into the update action.
+
+system:
+    instructions: |
+        You are Opportunity Assistant, an internal assistant for sales users.
+        You help users find an Opportunity by name and change its stage. Nothing else.
+        Be concise and factual. Use the exact names, stages, dates and amounts that
+        the actions return; never invent or estimate record data.
+        Report the result of a change only from the action's output. Never say a
+        change was made unless the update action returned success = True.
+        If a request is not about finding an Opportunity or changing its stage,
+        say briefly what you can help with.
+    messages:
+        welcome: "Hi, I'm Opportunity Assistant. I can look up an opportunity by name and change its stage."
+        error: "Sorry, something went wrong. Please try again."
+
+# WORKAROUND (2026-10-18): sf CLI 2.152.14 / @salesforce/agents 2.3.1 crashes in
+# "sf agent preview start --authoring-bundle" when default_agent_user is absent
+# (scriptAgent.js calls defaultAgentUser.replace without a null check). Employee agents
+# normally omit this; the CLI sets bypassUser=false for employee agents with a valid user.
+# Remove before publishing (the agentforce-generate skill warns publish can fail with it).
+access:
+    default_agent_user: "YOUR_ADMIN_USERNAME"
+
+config:
+    developer_name: "Opportunity_Assistant"
+    agent_label: "Opportunity Assistant"
+    description: "Finds an Opportunity by name and changes its stage for internal sales users."
+    agent_type: "AgentforceEmployeeAgent"
+
+variables:
+    selected_opportunity_id: mutable string = ""
+        description: "ID of the single Opportunity returned by the last find_opportunity call; empty unless exactly one matched."
+
+language:
+    default_locale: "en_US"
+    additional_locales: ""
+    all_additional_locales: False
+
+start_agent opportunity_assistant:
+    label: "Opportunity Assistant"
+    description: "Find an Opportunity by name and change its stage"
+
+    reasoning:
+        instructions: ->
+            | Help the user with one Opportunity at a time.
+              To look up or change an Opportunity, first call {!@actions.find_opportunity}
+              with the name the user gave, even if you looked it up earlier in the conversation.
+              After find_opportunity returns:
+              - matchCount 0: say no opportunity matched, quote the name, and ask the user to check it. Do not change anything.
+              - matchCount greater than 1: list the candidates text exactly as returned and ask which one they mean. Do not change anything.
+              - matchCount 1: if the user asked only about the Opportunity, report its opportunityName, stageName, closeDate and amount.
+                If the user asked to change its stage, call {!@actions.update_opportunity_stage} with the stage the user asked for.
+              After update_opportunity_stage returns, report only what it returned:
+              - success True: confirm the stage is now currentStage.
+              - success False: say clearly that the change was not saved, give the message text exactly, and say the stage is still currentStage.
+                If the message lists valid stages, ask the user to pick one.
+              Do not call an action again for the same request once you have its result.
+
+        actions:
+            find_opportunity: @actions.find_opportunity
+                with opportunityName = ...
+                set @variables.selected_opportunity_id = @outputs.opportunityId
+            update_opportunity_stage: @actions.update_opportunity_stage
+                with opportunityId = @variables.selected_opportunity_id
+                with newStage = ...
+                available when @variables.selected_opportunity_id != ""
+
+    actions:
+        find_opportunity:
+            description: "Find Opportunities by full or partial name. Returns the single match with its stage, close date and amount, or a list of candidates when several match."
+            label: "Find Opportunity"
+            target: "apex://OpportunityAssistantFind"
+            include_in_progress_indicator: True
+            progress_indicator_message: "Looking up the opportunity..."
+            inputs:
+                opportunityName: string
+                    description: "Full or partial name of the opportunity, as the user said it"
+                    label: "Opportunity Name"
+                    is_required: True
+            outputs:
+                matchCount: integer
+                    description: "Number of opportunities that match the name"
+                    label: "Match Count"
+                    is_displayable: False
+                    filter_from_agent: False
+                opportunityId: string
+                    description: "ID of the opportunity when exactly one matches; empty otherwise"
+                    label: "Opportunity ID"
+                    is_displayable: False
+                    filter_from_agent: True
+                opportunityName: string
+                    description: "Name of the matching opportunity"
+                    label: "Opportunity Name"
+                    is_displayable: True
+                    filter_from_agent: False
+                stageName: string
+                    description: "Current stage of the matching opportunity"
+                    label: "Stage"
+                    is_displayable: True
+                    filter_from_agent: False
+                closeDate: date
+                    description: "Close date of the matching opportunity"
+                    label: "Close Date"
+                    is_displayable: True
+                    filter_from_agent: False
+                amount: number
+                    description: "Amount of the matching opportunity; may be empty"
+                    label: "Amount"
+                    is_displayable: True
+                    filter_from_agent: False
+                candidates: string
+                    description: "One line per matching opportunity when several match"
+                    label: "Candidates"
+                    is_displayable: True
+                    filter_from_agent: False
+                message: string
+                    description: "Plain-language summary of the search result"
+                    label: "Message"
+                    is_displayable: False
+                    filter_from_agent: False
+
+        update_opportunity_stage:
+            description: "Change the stage of the opportunity found by find_opportunity. Reports whether the change was saved and the stage the record holds afterwards."
+            label: "Update Opportunity Stage"
+            target: "apex://OpportunityAssistantUpdateStage"
+            include_in_progress_indicator: True
+            progress_indicator_message: "Updating the stage..."
+            inputs:
+                opportunityId: string
+                    description: "ID of the opportunity returned by find_opportunity"
+                    label: "Opportunity ID"
+                    is_required: True
+                newStage: string
+                    description: "Stage the user asked for, for example Qualification or Closed Won"
+                    label: "New Stage"
+                    is_required: True
+            outputs:
+                success: boolean
+                    description: "True only if the change was saved and the record now holds the new stage"
+                    label: "Success"
+                    is_displayable: False
+                    filter_from_agent: False
+                message: string
+                    description: "What happened, including the save error text when the change was not saved"
+                    label: "Message"
+                    is_displayable: True
+                    filter_from_agent: False
+                currentStage: string
+                    description: "Stage the opportunity holds after the attempt"
+                    label: "Current Stage"
+                    is_displayable: True
+                    filter_from_agent: False
+                previousStage: string
+                    description: "Stage the opportunity held before the attempt"
+                    label: "Previous Stage"
+                    is_displayable: False
+                    filter_from_agent: False

@@ -1,0 +1,20 @@
+# Interception test for find_opportunity (read-only): asking about an opportunity must not change it.
+action: find_opportunity
+description: Looking up an opportunity leaves it unchanged.
+setup:
+  - object: Opportunity
+    alias: lookup
+    fields:
+      Name: "AI-Test-{{runId}}-lookup"
+      StageName: Qualification
+      CloseDate: "{{today+30}}"
+      Amount: 500
+utterance: "What stage is the opportunity AI-Test-{{runId}}-lookup in?"
+expect:
+  - record: lookup
+    fields:
+      StageName: Qualification
+must_not_change:
+  - record: lookup
+    fields: [Amount, CloseDate]
+timeout_seconds: 120

@@ -1,0 +1,28 @@
+# Interception test for update_opportunity_stage: the agent is asked to close an opportunity;
+# pass/fail is decided by the org record, not by the agent's reply.
+action: update_opportunity_stage
+description: Moving an opportunity to Closed Won must change its StageName and nothing else.
+setup:
+  - object: Opportunity
+    alias: target
+    fields:
+      Name: "AI-Test-{{runId}}-target"
+      StageName: Negotiation/Review
+      CloseDate: "{{today+30}}"
+      Amount: 1000
+  - object: Opportunity
+    alias: bystander
+    fields:
+      Name: "AI-Test-{{runId}}-bystander"
+      StageName: Negotiation/Review
+      CloseDate: "{{today+30}}"
+      Amount: 2000
+utterance: "Move the opportunity AI-Test-{{runId}}-target to Closed Won"
+expect:
+  - record: target
+    fields:
+      StageName: Closed Won
+must_not_change:
+  - record: bystander
+    fields: [StageName]
+timeout_seconds: 120

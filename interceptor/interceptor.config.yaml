@@ -1,0 +1,31 @@
+# Agent Interceptor configuration (example for the demo org). Paths are relative to this file.
+org:
+  alias: interceptor-dev
+  # Production guard: every run checks these before touching the org.
+  expectedOrgId: YOUR_ORG_ID
+  expectedInstanceUrl: https://YOUR_MY_DOMAIN.develop.my.salesforce.com
+  allowedOrganizationTypes: [Developer Edition]
+project:
+  root: ..
+  packageDir: force-app/main/default
+agent:
+  bundle: Opportunity_Assistant
+  agentFile: force-app/main/default/aiAuthoringBundles/Opportunity_Assistant/Opportunity_Assistant.agent
+specsDir: specs
+runsDir: runs
+limits:
+  maxConversations: 10
+verifier: crt
+crt:
+  project: 18329
+  robot: 28176
+  # Set by "interceptor crt-sync".
+  job: 28204
+  timeoutMinutes: 15
+  suiteFile: crt/interceptor_verify.robot
+agentiaBin: agentia
+mapping:
+  # Manual overrides always apply, in addition to the heuristics. Example:
+  # - component: "Flow:Opportunity_*"
+  #   actions: [update_opportunity_stage]
+  overrides: []

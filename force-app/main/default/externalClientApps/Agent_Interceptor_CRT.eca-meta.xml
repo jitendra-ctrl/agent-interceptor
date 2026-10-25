@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ExternalClientApplication xmlns="http://soap.sforce.com/2006/04/metadata">
+    <contactEmail>you@example.com</contactEmail>
+    <description>Lets Copado Robotic Testing (QForce Client Authenticate) read and write Agent Interceptor test records in this demo org through the REST API.</description>
+    <distributionState>Local</distributionState>
+    <isProtected>false</isProtected>
+    <label>Agent Interceptor CRT</label>
+</ExternalClientApplication>

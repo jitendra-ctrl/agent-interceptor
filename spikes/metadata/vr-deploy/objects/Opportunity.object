@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <validationRules>
+        <fullName>AI_Test_Block_Closed_Won</fullName>
+        <active>true</active>
+        <description>TEMPORARY Agent Interceptor demo rule. Blocks moving AI-Test-* opportunities to Closed Won. Only AI-Test records are affected. Removed after each run.</description>
+        <errorConditionFormula>AND(
+    ISCHANGED(StageName),
+    ISPICKVAL(StageName, &quot;Closed Won&quot;),
+    BEGINS(Name, &quot;AI-Test-&quot;)
+)</errorConditionFormula>
+        <errorDisplayField>StageName</errorDisplayField>
+        <errorMessage>Closed Won needs an approved quote first.</errorMessage>
+    </validationRules>
+</CustomObject>

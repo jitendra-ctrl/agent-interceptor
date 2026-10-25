@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>Pre-approves the assigned user for the Agent_Interceptor_CRT External Client App (client credentials run-as user). Grants no other permissions.</description>
+    <hasActivationRequired>false</hasActivationRequired>
+    <label>Agent Interceptor CRT Access</label>
+</PermissionSet>

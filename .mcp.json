@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "agentia": {
+      "command": "sh",
+      "args": ["-c", "PATH=\"$HOME/.npm-global/bin:/usr/local/bin:$PATH\" exec agentia mcp start"]
+    }
+  }
+}

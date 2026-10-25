@@ -1,0 +1,21 @@
+{
+  "name": "agent-interceptor",
+  "version": "0.1.0",
+  "description": "Verifies Agentforce agent claims against org data before a change is promoted.",
+  "private": true,
+  "type": "module",
+  "bin": { "interceptor": "dist/src/cli.js" },
+  "engines": { "node": ">=18" },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "npm run build && node --test dist/test/*.test.js",
+    "interceptor": "node dist/src/cli.js"
+  },
+  "dependencies": {
+    "yaml": "2.9.1"
+  },
+  "devDependencies": {
+    "@types/node": "22.20.4",
+    "typescript": "5.9.3"
+  }
+}

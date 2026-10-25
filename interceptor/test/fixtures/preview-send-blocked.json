@@ -1,0 +1,21 @@
+{
+  "status": 0,
+  "result": {
+    "messages": [
+      {
+        "type": "Inform",
+        "id": "REDACTED",
+        "metrics": {},
+        "feedbackId": "REDACTED",
+        "planId": "14b4f649-52df-4e0b-8af1-44a304691182",
+        "isContentSafe": true,
+        "message": "The change was not saved: Closed Won needs an approved quote first. The stage is still Negotiation/Review.\n\nWould you like to move this opportunity to a different stage or need details about another opportunity?",
+        "result": [],
+        "citedReferences": []
+      }
+    ],
+    "agentApiName": "Opportunity_Assistant",
+    "sessionId": "SESSION-REDACTED"
+  },
+  "warnings": []
+}

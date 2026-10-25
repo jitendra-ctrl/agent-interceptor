@@ -1,0 +1,33 @@
+{
+  "status": 0,
+  "result": [
+    {
+      "id": 691632,
+      "status": "failed",
+      "configuration": {
+        "executionParameters": [
+          {
+            "key": "-v",
+            "type": "clp",
+            "value": "RUN_ID:p0-demo"
+          }
+        ]
+      },
+      "logReportUrl": "https://sg-robotic.copado.com/robots/18329/r/28176/suite/28200/runs/691632/report",
+      "xunitReport": {
+        "testsuite": {
+          "total": {
+            "errors": 0,
+            "failures": 1,
+            "name": "Phase0 Discovery",
+            "passes": 2,
+            "skip": 0,
+            "tests": 3
+          }
+        }
+      },
+      "jobId": 28200,
+      "robotId": 28176
+    }
+  ]
+}
